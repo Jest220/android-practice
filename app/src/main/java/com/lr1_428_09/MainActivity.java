@@ -76,36 +76,66 @@ public class MainActivity extends AppCompatActivity {
         return a0 + a1 * x + a2 * x * x;
     }
 
+    /**
+     * Метод для нахождения корня уравнения методом бисекции (деления отрезка пополам).
+     *
+     * @param a0       коэффициент a0 полинома
+     * @param a1       коэффициент a1 полинома
+     * @param a2       коэффициент a2 полинома
+     * @param fValue   значение функции, с которым сравниваем (решаем polynomial(...) = fValue)
+     * @param left     левая граница отрезка
+     * @param right    правая граница отрезка
+     * @param eps      допустимая погрешность
+     * @param maxIter  максимальное число итераций
+     * @return         результат с флагом успеха, найденным корнем и погрешностью
+     */
     private BisectionResult findRootByBisection(double a0, double a1, double a2, double fValue,
                                                 double left, double right, double eps, int maxIter) {
+        // Вычисляем значение функции на границах
         double fLeft = polynomial(a0, a1, a2, left) - fValue;
         double fRight = polynomial(a0, a1, a2, right) - fValue;
+
+        // Проверяем: если значения NaN или на концах отрезка функция имеет одинаковый знак,
+        // значит метод бисекции неприменим (корня на отрезке нет или он не гарантирован)
         if (Double.isNaN(fLeft) || Double.isNaN(fRight) || fLeft * fRight > 0) {
             return new BisectionResult(false, Double.NaN, Double.NaN);
         }
 
-        double mid = left;
-        double err = Math.abs(right - left);
-        int iter = 0;
+        // Начальные значения
+        double mid = left;                  // середина отрезка
+        double err = Math.abs(right - left); // начальная погрешность — длина отрезка
+        int iter = 0;                        // счетчик итераций
+
+        // Итерационный процесс
         while (err > eps && iter < maxIter) {
+            // Находим середину отрезка
             mid = 0.5 * (left + right);
+            // Вычисляем значение функции в середине
             double fMid = polynomial(a0, a1, a2, mid) - fValue;
 
+            // Если значение функции близко к нулю (достаточно точное решение найдено)
             if (Math.abs(fMid) < eps) {
-                err = Math.abs(fMid);
+                err = Math.abs(fMid); // уточняем погрешность
                 break;
             }
 
+            // Проверяем, в какой половине отрезка находится корень
             if (fLeft * fMid <= 0) {
+                // Корень находится между left и mid → сдвигаем правую границу
                 right = mid;
                 fRight = fMid;
             } else {
+                // Корень находится между mid и right → сдвигаем левую границу
                 left = mid;
                 fLeft = fMid;
             }
+
+            // Пересчитываем текущую погрешность
             err = Math.abs(right - left);
             iter++;
         }
+
+        // Возвращаем результат: метод завершился успешно, найденный корень и погрешность
         return new BisectionResult(true, mid, err);
     }
 
