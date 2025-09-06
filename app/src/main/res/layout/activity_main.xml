@@ -27,7 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/onSurface"
                 android:text="@string/title" />
 
             <TextView
@@ -35,7 +34,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/onSurface"
                 android:text="@string/subtitle"
                 android:paddingBottom="12dp" />
 
