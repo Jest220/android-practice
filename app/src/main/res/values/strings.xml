@@ -16,6 +16,9 @@
     <string name="result_x">Значение x:</string>
     <string name="result_err">Погрешность:</string>
 
+
+    <string name="error_input_interval">Задан некорректный интервал</string>
+    <string name="error_input_eps">Задана некорректная погрешность</string>
     <string name="error_input">Проверьте корректность введённых данных</string>
     <string name="error_no_root">Корень не найден на заданном интервале</string>
     <string name="interval_hint">Интервал поиска корня [L, R]</string>

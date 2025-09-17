@@ -48,8 +48,13 @@ public class MainActivity extends AppCompatActivity {
                 double fx = parseOrThrow(etFx.getText());
                 double eps = parseOrThrow(etEps.getText());
 
-                if (eps <= 0) {
-                    Toast.makeText(this, R.string.error_input, Toast.LENGTH_SHORT).show();
+                if (left  > right) {
+                    Toast.makeText(this, R.string.error_input_interval, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (eps <= 0 && eps >= 0.000001) {
+                    Toast.makeText(this, R.string.error_input_eps, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.error_no_root, Toast.LENGTH_SHORT).show();
                     return;
                 }
+
 
                 tvX.setText(getString(R.string.result_x) + " " + String.format("%.6f", result.x));
                 tvErr.setText(getString(R.string.result_err) + " " + String.format("%.6g", result.error));

@@ -101,7 +101,7 @@ cd lr1_428_09
 ./gradlew assembleDebug
 
 # Установка на устройство
-./gradlew installDebug
+./gradlew installDebug  
 ```
 
 ### Запуск в Android Studio
