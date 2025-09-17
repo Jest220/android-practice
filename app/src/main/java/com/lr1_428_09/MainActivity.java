@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (eps <= 0 && eps >= 0.000001) {
+                if (eps < 0.000001 || eps >= 1) {
                     Toast.makeText(this, R.string.error_input_eps, Toast.LENGTH_SHORT).show();
                     return;
                 }
