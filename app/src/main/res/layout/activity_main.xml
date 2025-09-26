@@ -11,7 +11,7 @@
         android:id="@+id/acceleration_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ожидание данных датчика..."
+        android:text="@string/waitingData"
         android:textSize="18sp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
