@@ -26,16 +26,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main); // Убедитесь, что у вас есть activity_main.xml
+        setContentView(R.layout.activity_main);
 
         // Находим TextView в вашей разметке (activity_main.xml)
-        // Предполагается, что у TextView есть ID "acceleration_text_view"
         accelerationTextView = findViewById(R.id.acceleration_text_view);
-        if (accelerationTextView == null) {
-            // Если TextView не найден, можно вывести ошибку или создать его программно
-            // Для простоты, пока просто оставим это так.
-            // В реальном приложении стоит обработать эту ситуацию.
-        }
 
 
         // Получаем экземпляр SensorManager
@@ -48,9 +42,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Проверяем, доступен ли датчик
         if (linearAccelerationSensor == null) {
-            if (accelerationTextView != null) {
-                accelerationTextView.setText("Датчик линейного ускорения недоступен на этом устройстве.");
-            }
+            accelerationTextView.setText(R.string.unavailableSensor);
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -74,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         super.onPause();
-        // Отменяем регистрацию слушателя, чтобы экономить батарею
+        // Отменяем регистрацию слушателя
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);
         }
@@ -97,17 +89,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     "Z: " + String.format("%.2f", z) + " м/с²";
 
             // Отображаем данные в TextView
-            if (accelerationTextView != null) {
-                accelerationTextView.setText(accelerationText);
-            }
+            accelerationTextView.setText(accelerationText);
         }
     }
-
-    // Этот метод вызывается при изменении точности датчика
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Здесь можно обработать изменение точности, если это необходимо
-        // Например, вывести сообщение пользователю.
-        // Для простого отслеживания ускорения это часто не требуется.
+
     }
 }

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Linear Accelerometer</string>
     <string name="waitingData">Ожидание данных датчика...</string>
+    <string name="unavailableSensor">Датчик линейного ускорения недоступен на этом устройстве</string>
 </resources>
