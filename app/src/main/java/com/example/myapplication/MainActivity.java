@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView; // Импортируем TextView
 
 import androidx.activity.EdgeToEdge;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor linearAccelerationSensor;
     private TextView accelerationTextView; // Для отображения данных
+    private Button btnListSensors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Находим TextView в вашей разметке (activity_main.xml)
         accelerationTextView = findViewById(R.id.acceleration_text_view);
-
+        btnListSensors = findViewById(R.id.btnListSensors);
+        // Вызов нового активити со списком сенсоров
+        btnListSensors.setOnClickListener(v -> {
+            startActivity(new android.content.Intent(this, SensorsListActivity.class));
+        });
 
         // Получаем экземпляр SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
