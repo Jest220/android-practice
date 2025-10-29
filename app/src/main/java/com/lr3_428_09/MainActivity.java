@@ -20,8 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lr3_428_09.adapter.DayGroupAdapter;
+import com.lr3_428_09.database.DayOfWeekDao;
 import com.lr3_428_09.database.DbHelper;
+import com.lr3_428_09.database.LessonDao;
+import com.lr3_428_09.database.LessonTypeDao;
 import com.lr3_428_09.database.ScheduleDao;
+import com.lr3_428_09.database.TeacherDao;
 import com.lr3_428_09.model.DayGroup;
 import com.lr3_428_09.model.ScheduleItem;
 
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Обработчик для кнопки добавления урока
+        // Обработчик для кнопки добавления пары
         fabAddLesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             dayGroups = null;
                     }
-                    dayGroupAdapter = new DayGroupAdapter(dayGroups);
+                    dayGroupAdapter = new DayGroupAdapter(dayGroups, db);
                     recyclerView.setAdapter(dayGroupAdapter);
                 }
 
@@ -130,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 dayGroups = null;
         }
-        dayGroupAdapter = new DayGroupAdapter(dayGroups);
+        dayGroupAdapter = new DayGroupAdapter(dayGroups, db);
         recyclerView.setAdapter(dayGroupAdapter);
     }
 
@@ -145,25 +149,28 @@ public class MainActivity extends AppCompatActivity {
 
         List<DayGroup> groups = new ArrayList<>();
         Cursor cursor = scheduleDao.getAllLessons(weekType);
+
         String myDayOfWeek_id = "Понедельник";
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex("id"));
-            int number = cursor.getInt(cursor.getColumnIndex("number"));
-            String lesson_name = cursor.getString(cursor.getColumnIndex("lesson"));
-            String lesson_type = cursor.getString(cursor.getColumnIndex("lessontype"));
-            String teacher_name = cursor.getString(cursor.getColumnIndex("teacher"));
-            String classroom = cursor.getString(cursor.getColumnIndex("classroom"));
+            System.out.println("PIZDEC");
+            int id = cursor.getInt(0);
+            int number = cursor.getInt(2);
+            String lesson_name = cursor.getString(4);
+            String lesson_type = cursor.getString(7);
+            String teacher_name = cursor.getString(5);
+            String classroom = cursor.getString(3);
+            String dayOfWeek = cursor.getString(1);
             int weektype = spinnerWeekType.getSelectedItemPosition();
-            int dayofweek = daysofweek.get(cursor.getString(cursor.getColumnIndex("dayofweek")));
+            int dayofweek = daysofweek.get(dayOfWeek);
 
             ScheduleItem item = new ScheduleItem(id, number, weektype, dayofweek, lesson_name,
                     lesson_type, teacher_name, classroom);
-            String dayOfWeek = cursor.getString(cursor.getColumnIndex("dayofweek"));
+
             if (dayOfWeek.equals(myDayOfWeek_id)) {
-                if (groups.size() == 0) groups.add(new DayGroup(dayOfWeek, new ArrayList<>()));
+                if (groups.isEmpty()) groups.add(new DayGroup(dayOfWeek, new ArrayList<>()));
                 groups.get(groups.size() - 1).getLessons().add(item);
             } else {
-                groups.add(new DayGroup(cursor.getString(cursor.getColumnIndex("dayofweek")), new ArrayList<>()));
+                groups.add(new DayGroup(dayOfWeek, new ArrayList<>()));
                 groups.get(groups.size() - 1).getLessons().add(item);
                 myDayOfWeek_id = dayOfWeek;
             }

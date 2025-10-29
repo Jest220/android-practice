@@ -1,5 +1,6 @@
 package com.lr3_428_09.adapter;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import java.util.List;
 public class DayGroupAdapter extends RecyclerView.Adapter<DayGroupAdapter.DayViewHolder> {
 
     private List<DayGroup> dayGroups;
+    private SQLiteDatabase db;
 
-    public DayGroupAdapter(List<DayGroup> dayGroups) {
+    public DayGroupAdapter(List<DayGroup> dayGroups, SQLiteDatabase db) {
         this.dayGroups = dayGroups;
+        this.db = db;
     }
 
     @NonNull
@@ -36,7 +39,7 @@ public class DayGroupAdapter extends RecyclerView.Adapter<DayGroupAdapter.DayVie
         holder.tvDayName.setText(dayGroup.getDayName());
 
         // Настраиваем внутренний RecyclerView для уроков
-        LessonAdapter lessonAdapter = new LessonAdapter(dayGroup.getLessons());
+        LessonAdapter lessonAdapter = new LessonAdapter(dayGroup.getLessons(), db);
         holder.rvLessons.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
         holder.rvLessons.setAdapter(lessonAdapter);
 
