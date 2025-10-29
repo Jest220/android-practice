@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">lr3_428_09</string>
+    <string name="lessonInformation">Информация об уроке</string>
+    <string name="lessonName">Название урока</string>
+    <string name="weekType">Тип недели</string>
+    <string name="dayOfWeek">День недели</string>
+    <string name="lessonNumber">Номер пары</string>
+    <string name="lessonType">Тип пары</string>
+    <string name="teacher">Преподаватель</string>
+    <string name="classroom">Аудитория</string>
+    <string name="cancel">Отменить</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="schedule">Расписание занятий</string>
+    <string name="addLesson">Добавить урок</string>
 </resources>

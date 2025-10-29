@@ -28,8 +28,6 @@ public class LessonEditActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
-    
-    private int lessonId = -1; // -1 означает создание нового урока
     private boolean isEditMode = false;
 
     @Override
@@ -176,7 +174,6 @@ public class LessonEditActivity extends AppCompatActivity {
         finish();
     }
 
-    //TODO: сделать удаление из базы
     private void deleteLesson() {
         if (isEditMode) {
             scheduleDao.deleteLesson(lesson.getId());
