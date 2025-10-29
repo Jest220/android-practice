@@ -34,7 +34,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
     public void onBindViewHolder(@NonNull LessonViewHolder holder, int position) {
         ScheduleItem lesson = lessons.get(position);
 
-        holder.tvLessonName.setText(lesson.getLessonName());
+        holder.tvLessonName.setText(String.format("%d. %s", lesson.getNumber(), lesson.getLessonName()));
         holder.tvLessonType.setText(lesson.getLessonType());
         holder.tvTeacher.setText(lesson.getTeacherName());
         holder.tvClassroom.setText("Аудитория: " + lesson.getClassroom());
@@ -44,12 +44,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), LessonEditActivity.class);
-                intent.putExtra("lesson_id", lesson.getId());
-                intent.putExtra("lesson_name", lesson.getLessonName());
-                intent.putExtra("lesson_type", lesson.getLessonType());
-                intent.putExtra("teacher_name", lesson.getTeacherName());
-                intent.putExtra("classroom", lesson.getClassroom());
-                intent.putExtra("lesson_number", lesson.getNumber());
+                intent.putExtra("lesson", lesson);
                 v.getContext().startActivity(intent);
             }
         });

@@ -67,52 +67,46 @@
             android:padding="12dp" />
 
         <!-- Номер урока -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Номер урока"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Spinner
-            android:id="@+id/spinnerLessonNumber"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
-            android:padding="12dp" />
+            android:hint="Номер урока">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etLessonNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Тип урока -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Тип урока"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Spinner
-            android:id="@+id/spinnerLessonType"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
-            android:padding="12dp" />
+            android:hint="Тип урока">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etLessonType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Преподаватель -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Преподаватель"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Spinner
-            android:id="@+id/spinnerTeacher"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
-            android:padding="12dp" />
+            android:hint="Преподаватель">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTeacher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Аудитория -->
         <com.google.android.material.textfield.TextInputLayout

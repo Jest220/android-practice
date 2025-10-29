@@ -11,47 +11,37 @@ public class ScheduleDao {
         this.db = db;
     }
 
-    public long insertLesson(int number, int weektypeId, int dayofweekId,
-                             int lessonId, int lessontypeId, int teacherId) {
+    public long insertLesson(String number, String weektype, String dayofweek,
+                             String lesson, String lessontype, String teacher, String classroom) {
         ContentValues values = new ContentValues();
         values.put("number", number);
-        values.put("weektype_id", weektypeId);
-        values.put("dayofweek_id", dayofweekId);
-        values.put("lesson_id", lessonId);
-        values.put("lessontype_id", lessontypeId);
-        values.put("teacher_id", teacherId);
+        values.put("weektype", weektype);
+        values.put("dayofweek", dayofweek);
+        values.put("lesson", lesson);
+        values.put("lessontype", lessontype);
+        values.put("teacher", teacher);
+        values.put("classroom", classroom);
         return db.insert("Schedule", null, values);
     }
 
-    public Cursor getAllLessons() {
-        return db.rawQuery("select * from Schedule", null);
-    }
-
-    public Cursor getAllLessonsWithJoin(int weektypeId) {
-        String query = "SELECT \n" +
-                "    s.id,\n" +
-                "    s.number,\n" +
-                "    s.dayofweek_id,\n" +
-                "    dw.name as day_name,\n" +
-                "    l.name as lesson_name,\n" +
-                "    lt.type as lesson_type,\n" +
-                "    t.name as teacher_name,\n" +
-                "    s.classroom\n" +
-                "FROM Schedule s\n" +
-                "JOIN DaysOfWeek dw ON s.dayofweek_id = dw.id\n" +
-                "JOIN Lessons l ON s.lesson_id = l.id\n" +
-                "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
-                "JOIN Teachers t ON s.teacher_id = t.id\n" +
-                "WHERE s.weektype_id = " + weektypeId + "\n" +
-                "ORDER BY s.dayofweek_id, s.number;";
-        return db.rawQuery(query, null);
+    public Cursor getAllLessons(String weektype) {
+        return db.rawQuery("select * from Schedule where weektype = ? order by dayofweek, number;", new String[]{weektype});
     }
 
     public int deleteLesson(int id) {
         return db.delete("Schedule", "id = ?", new String[]{String.valueOf(id)});
     }
 
-    public Cursor getLesson(int id) {
-        return db.rawQuery("select * from Schedule where id = ? limit 1", new String[]{String.valueOf(id)});
+    public int updateLesson(int id, String number, String weektype, String dayofweek,
+                                String lesson, String lessontype, String teacher, String classroom) {
+        ContentValues values = new ContentValues();
+        values.put("number", number);
+        values.put("weektype", weektype);
+        values.put("dayofweek", dayofweek);
+        values.put("lesson", lesson);
+        values.put("lessontype", lessontype);
+        values.put("teacher", teacher);
+        values.put("classroom", classroom);
+        return db.update("Schedule", values, "id = ?", new String[]{String.valueOf(id)});
     }
 }
