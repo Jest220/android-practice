@@ -27,6 +27,26 @@ public class ScheduleDao {
         return db.rawQuery("select * from Schedule", null);
     }
 
+    public Cursor getAllLessonsWithJoin(int weektypeId) {
+        String query = "SELECT \n" +
+                "    s.id,\n" +
+                "    s.number,\n" +
+                "    s.dayofweek_id,\n" +
+                "    dw.name as day_name,\n" +
+                "    l.name as lesson_name,\n" +
+                "    lt.type as lesson_type,\n" +
+                "    t.name as teacher_name,\n" +
+                "    s.classroom\n" +
+                "FROM Schedule s\n" +
+                "JOIN DaysOfWeek dw ON s.dayofweek_id = dw.id\n" +
+                "JOIN Lessons l ON s.lesson_id = l.id\n" +
+                "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
+                "JOIN Teachers t ON s.teacher_id = t.id\n" +
+                "WHERE s.weektype_id = " + weektypeId + "\n" +
+                "ORDER BY s.dayofweek_id, s.number;";
+        return db.rawQuery(query, null);
+    }
+
     public int deleteLesson(int id) {
         return db.delete("Schedule", "id = ?", new String[]{String.valueOf(id)});
     }
