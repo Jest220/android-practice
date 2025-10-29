@@ -20,12 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lr3_428_09.adapter.DayGroupAdapter;
-import com.lr3_428_09.database.DayOfWeekDao;
 import com.lr3_428_09.database.DbHelper;
-import com.lr3_428_09.database.LessonDao;
-import com.lr3_428_09.database.LessonTypeDao;
 import com.lr3_428_09.database.ScheduleDao;
-import com.lr3_428_09.database.TeacherDao;
 import com.lr3_428_09.model.DayGroup;
 import com.lr3_428_09.model.ScheduleItem;
 
@@ -63,12 +59,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Обработчик для кнопки добавления пары
-        fabAddLesson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LessonEditActivity.class);
-                startActivity(intent);
-            }
+        fabAddLesson.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LessonEditActivity.class);
+            startActivity(intent);
         });
 
         dbHelper = new DbHelper(this);
@@ -97,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             dayGroups = null;
                     }
-                    dayGroupAdapter = new DayGroupAdapter(dayGroups, db);
+                    dayGroupAdapter = new DayGroupAdapter(dayGroups);
                     recyclerView.setAdapter(dayGroupAdapter);
                 }
 
@@ -134,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 dayGroups = null;
         }
-        dayGroupAdapter = new DayGroupAdapter(dayGroups, db);
+        dayGroupAdapter = new DayGroupAdapter(dayGroups);
         recyclerView.setAdapter(dayGroupAdapter);
     }
 
@@ -152,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
         String myDayOfWeek_id = "Понедельник";
         while (cursor.moveToNext()) {
-            System.out.println("PIZDEC");
             int id = cursor.getInt(0);
             int number = cursor.getInt(2);
             String lesson_name = cursor.getString(4);

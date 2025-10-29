@@ -11,29 +11,29 @@ public class ScheduleDao {
         this.db = db;
     }
 
-    public long insertLesson(String number, String weektype, String dayofweek,
-                             String lesson, String lessontype, String teacher, String classroom) {
+    public long insertLesson(int number, int weektype_id, int dayofweek_id, int lesson_id,
+                             int lessontype_id, int teacher_id, String classroom) {
         ContentValues values = new ContentValues();
         values.put("number", number);
-        values.put("weektype", weektype);
-        values.put("dayofweek", dayofweek);
-        values.put("lesson", lesson);
-        values.put("lessontype", lessontype);
-        values.put("teacher", teacher);
+        values.put("weektype_id", weektype_id);
+        values.put("dayofweek_id", dayofweek_id);
+        values.put("lesson_id", lesson_id);
+        values.put("lessontype_id", lessontype_id);
+        values.put("teacher_id", teacher_id);
         values.put("classroom", classroom);
         return db.insert("Schedule", null, values);
     }
 
     public Cursor getAllLessons(String weektype) {
-        String query = "SELECT s.id, d.name as dow, s.number, s.classroom, l.name as lesson, t.name as teacher, w.type as week, lt.type as lessontype \n" +
+        String query = "SELECT s.id, d.name as dow, s.number, s.classroom, l.name as lesson, t.name as teacher, w.name as week, lt.name as lessontype\n" +
                 "FROM Schedule s\n" +
                 "JOIN WeekTypes w ON s.weektype_id = w.id\n" +
                 "JOIN Teachers t ON s.teacher_id = t.id\n" +
                 "JOIN Lessons l ON s.lesson_id = l.id\n" +
                 "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
                 "JOIN DaysOfWeek d ON s.dayofweek_id = d.id\n" +
-                "WHERE w.type = ?\n" +
-                "ORDER BY week";
+                "WHERE w.name = ? \n" +
+                "ORDER BY dow";
         return db.rawQuery(query, new String[]{weektype});
     }
 
@@ -41,15 +41,15 @@ public class ScheduleDao {
         return db.delete("Schedule", "id = ?", new String[]{String.valueOf(id)});
     }
 
-    public int updateLesson(int id, String number, String weektype, String dayofweek,
-                                String lesson, String lessontype, String teacher, String classroom) {
+    public int updateLesson(int id, int number, int weektype_id, int dayofweek_id, int lesson_id,
+                            int lessontype_id, int teacher_id, String classroom) {
         ContentValues values = new ContentValues();
         values.put("number", number);
-        values.put("weektype", weektype);
-        values.put("dayofweek", dayofweek);
-        values.put("lesson", lesson);
-        values.put("lessontype", lessontype);
-        values.put("teacher", teacher);
+        values.put("weektype_id", weektype_id);
+        values.put("dayofweek_id", dayofweek_id);
+        values.put("lesson_id", lesson_id);
+        values.put("lessontype_id", lessontype_id);
+        values.put("teacher_id", teacher_id);
         values.put("classroom", classroom);
         return db.update("Schedule", values, "id = ?", new String[]{String.valueOf(id)});
     }
