@@ -1,5 +1,6 @@
 package com.lr3_428_09.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lr3_428_09.LessonEditActivity;
 import com.lr3_428_09.R;
 import com.lr3_428_09.model.ScheduleItem;
 
@@ -36,6 +38,21 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
         holder.tvLessonType.setText(lesson.getLessonType());
         holder.tvTeacher.setText(lesson.getTeacherName());
         holder.tvClassroom.setText("Аудитория: " + lesson.getClassroom());
+
+        // Обработчик клика на урок
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), LessonEditActivity.class);
+                intent.putExtra("lesson_id", lesson.getId());
+                intent.putExtra("lesson_name", lesson.getLessonName());
+                intent.putExtra("lesson_type", lesson.getLessonType());
+                intent.putExtra("teacher_name", lesson.getTeacherName());
+                intent.putExtra("classroom", lesson.getClassroom());
+                intent.putExtra("lesson_number", lesson.getNumber());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

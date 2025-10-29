@@ -1,5 +1,6 @@
 package com.lr3_428_09;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lr3_428_09.adapter.DayGroupAdapter;
 import com.lr3_428_09.database.DbHelper;
 import com.lr3_428_09.database.ScheduleDao;
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private ScheduleDao scheduleDao;
     private WeekTypeDao weekTypeDao;
     private Spinner spinnerWeekType;
+    private FloatingActionButton fabAddLesson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +52,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         spinnerWeekType = findViewById(R.id.spinnerWeekType);
+        fabAddLesson = findViewById(R.id.fabAddLesson);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+
+        // Обработчик для кнопки добавления урока
+        fabAddLesson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LessonEditActivity.class);
+                startActivity(intent);
+            }
+        });
 
         dbHelper = new DbHelper(this);
 
@@ -63,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             weekTypeDao = new WeekTypeDao(db);
 
             ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             Cursor cursor = weekTypeDao.getAllWeekTypes();
             while (cursor.moveToNext()) {
                 adapter.add(cursor.getString(0));
@@ -74,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
             spinnerWeekType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedItem = parent.getItemAtPosition(position).toString();
                     List<DayGroup> dayGroups;
                     switch (position) {
                         case 0:
@@ -126,10 +137,10 @@ public class MainActivity extends AppCompatActivity {
                     lesson_type, teacher_name, classroom);
             int dayOfWeek = cursor.getInt(cursor.getColumnIndex("dayofweek_id"));
             if (dayOfWeek == dayOfWeek_id) {
-                groups.getLast().getLessons().add(item);
+                groups.get(groups.size() - 1).getLessons().add(item);
             } else {
                 groups.add(new DayGroup(cursor.getString(cursor.getColumnIndex("day_name")), new ArrayList<>()));
-                groups.getLast().getLessons().add(item);
+                groups.get(groups.size() - 1).getLessons().add(item);
                 dayOfWeek_id = dayOfWeek;
             }
         }
