@@ -33,7 +33,7 @@ public class ScheduleDao {
                 "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
                 "JOIN DaysOfWeek d ON s.dayofweek_id = d.id\n" +
                 "WHERE w.name = ? \n" +
-                "ORDER BY dow";
+                "ORDER BY dow, number";
         return db.rawQuery(query, new String[]{weektype});
     }
 
