@@ -13,4 +13,10 @@
     <string name="delete">Удалить</string>
     <string name="schedule">Расписание занятий</string>
     <string name="addLesson">Добавить пару</string>
+    <string name="records">Записи</string>
+    <string name="table">Таблица</string>
+    <string name="administration">Администрирование</string>
+    <string name="add">Добавить</string>
+    <string name="admin">Админ</string>
+    <string name="value">Значение</string>
 </resources>

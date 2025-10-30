@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ScheduleDao scheduleDao;
     private Spinner spinnerWeekType;
     private FloatingActionButton fabAddLesson;
+    private FloatingActionButton fabAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         spinnerWeekType = findViewById(R.id.spinnerWeekType);
         fabAddLesson = findViewById(R.id.fabAddLesson);
+        fabAdmin = findViewById(R.id.fabAdmin);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -61,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         // Обработчик для кнопки добавления пары
         fabAddLesson.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LessonEditActivity.class);
+            startActivity(intent);
+        });
+
+        fabAdmin.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AdministrationActivity.class);
             startActivity(intent);
         });
 

@@ -5,69 +5,85 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-        <!-- Заголовок -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Администрирование"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp" />
+    <!-- Заголовок -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/administration"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp" />
 
-        <!-- Таблица -->
-        <TextView
-            android:layout_width="match_parent"
+    <!-- Таблица -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/table"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/spinnerTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/spinner_background"
+        android:padding="12dp" />
+
+    <!-- Список записей -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/records"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Список -->
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp"
+        android:divider="@color/divider"
+        android:dividerHeight="1dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Таблица"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/cancel"
+            android:backgroundTint="@color/text_secondary"
+            android:textColor="@color/white"
             android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <Spinner
-            android:id="@+id/spinnerTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/spinner_background"
             android:padding="12dp" />
 
-        <!-- Список записей -->
-        <TextView
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Записи"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Список -->
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginBottom="16dp"
-            android:divider="@color/divider"
-            android:dividerHeight="1dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnAdd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/primary_blue"
-                android:padding="12dp"
-                android:text="Добавить"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/add"
+            android:backgroundTint="@color/primary_blue"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:padding="12dp" />
 
     </LinearLayout>
+
+</LinearLayout>
 
 
