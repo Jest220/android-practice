@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lr3_428_09</string>
+    <string name="app_name">Schedule</string>
     <string name="lessonInformation">Информация о паре</string>
     <string name="lessonName">Название предмета</string>
     <string name="weekType">Тип недели</string>
@@ -13,8 +13,6 @@
     <string name="delete">Удалить</string>
     <string name="schedule">Расписание занятий</string>
     <string name="addLesson">Добавить пару</string>
-    <string name="records">Записи</string>
-    <string name="table">Таблица</string>
     <string name="administration">Администрирование</string>
     <string name="add">Добавить</string>
     <string name="admin">Админ</string>

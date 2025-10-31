@@ -17,13 +17,6 @@
         android:layout_marginBottom="24dp" />
 
     <!-- Таблица -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/table"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
     <Spinner
         android:id="@+id/spinnerTable"
         android:layout_width="match_parent"
@@ -33,14 +26,6 @@
         android:padding="12dp" />
 
     <!-- Список записей -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/records"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Список -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

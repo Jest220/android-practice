@@ -1,20 +1,16 @@
 package com.lr3_428_09;
 
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lr3_428_09.database.DbHelper;
@@ -86,7 +82,7 @@ public class AdministrationActivity extends AppCompatActivity {
     private void updateListView() {
         if (simpleDao != null) {
             records = simpleDao.getAll();
-            ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, android.R.layout.simple_list_item_1, records);
+            ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.list_item_normal, records);
             listView.setAdapter(listViewAdapter);
         }
     }
@@ -96,10 +92,10 @@ public class AdministrationActivity extends AppCompatActivity {
         tableNames = TableName.values();
         List<String> tableNameList = new ArrayList<>();
         for (TableName tableName : tableNames) {
-            tableNameList.add(tableName.getName());
+            tableNameList.add(tableName.getReadableName());
         }
         // заполняем спиннер
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter(AdministrationActivity.this, android.R.layout.simple_spinner_item, tableNameList);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.spinner_item_bold, tableNameList);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTable.setAdapter(spinnerAdapter);
 
@@ -110,7 +106,7 @@ public class AdministrationActivity extends AppCompatActivity {
                 String tableName = tableNames[spinnerTable.getSelectedItemPosition()].getName();
                 simpleDao = new SimpleDao(tableName, db);
                 records = simpleDao.getAll();
-                ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, android.R.layout.simple_list_item_1, records);
+                ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.list_item_normal, records);
                 listView.setAdapter(listViewAdapter);
             }
 

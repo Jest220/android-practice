@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
             db = dbHelper.openDatabase();
             scheduleDao = new ScheduleDao(db);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,
+            ArrayAdapter<String> adapter = new ArrayAdapter(this, R.layout.spinner_item_bold,
                     new String[]{"Нечетная", "Четная"});
-            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerWeekType.setAdapter(adapter);
 
             spinnerWeekType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
