@@ -5,14 +5,14 @@ import java.io.Serializable;
 public class ScheduleItem implements Serializable {
     private int id;
     private int number;
-    private int weektype;
-    private int dayofweek;
+    private String weektype;
+    private String dayofweek;
     private String lessonName;
     private String lessonType;
     private String teacherName;
     private String classroom;
 
-    public ScheduleItem(int id, int number, int weektype, int dayofweek,
+    public ScheduleItem(int id, int number, String weektype, String dayofweek,
                         String lessonName, String lessonType,
                         String teacherName, String classroom) {
         this.id = id;
@@ -32,6 +32,6 @@ public class ScheduleItem implements Serializable {
     public String getTeacherName() { return teacherName; }
     public String getClassroom() { return classroom; }
     public int getNumber() { return number; }
-    public int getWeektype() { return weektype; }
-    public int getDayofweek() { return dayofweek; }
+    public String getWeekType() { return weektype; }
+    public String getDayOfWeek() { return dayofweek; }
 }

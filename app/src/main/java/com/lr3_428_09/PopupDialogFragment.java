@@ -73,6 +73,11 @@ public class PopupDialogFragment extends DialogFragment {
             return;
         }
 
+        if (name.length() > 100) {
+            Toast.makeText(getContext(), "Сделайте значение короче, максимальный размер: 50", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (isEditMode) {
             simpleDao.update(model.getId(), name);
             Toast.makeText(getContext(), "Запись обновлена", Toast.LENGTH_SHORT).show();

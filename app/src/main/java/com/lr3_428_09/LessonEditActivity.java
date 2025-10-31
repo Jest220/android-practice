@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +21,6 @@ import com.lr3_428_09.model.ScheduleItem;
 import com.lr3_428_09.model.SimpleModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LessonEditActivity extends AppCompatActivity {
@@ -31,6 +31,7 @@ public class LessonEditActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
+    private List<SimpleModel> weektypes;
     private List<SimpleModel> dows;
     private List<SimpleModel> lessonNames;
     private List<SimpleModel> lessonTypes;
@@ -50,7 +51,7 @@ public class LessonEditActivity extends AppCompatActivity {
         setupButtons();
     }
 
-    private int getSelectedIndex(Spinner spinner, String val) {
+    private int getIndex(Spinner spinner, String val) {
         for (int i = 0; i < spinner.getCount(); ++i) {
             if (val.equals(spinner.getItemAtPosition(i).toString())) {
                 return i;
@@ -59,6 +60,7 @@ public class LessonEditActivity extends AppCompatActivity {
         return 0;
     }
     private void initializeModels() {
+        weektypes = new SimpleDao(TableName.WEEK_TYPES_TABLE.getName(), db).getAll();
         dows = new SimpleDao(TableName.DOWS_TABLE.getName(), db).getAll();
         lessonNames = new SimpleDao(TableName.LESSONS_TABLE.getName(), db).getAll();
         lessonTypes = new SimpleDao(TableName.LESSON_TYPES_TABLE.getName(), db).getAll();
@@ -91,37 +93,53 @@ public class LessonEditActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        // Настройка спиннера номера предмета
-        ArrayAdapter<String> numberAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-        numberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        numberAdapter.addAll(getNumbers());
-        spinnerLessonNumber.setAdapter(numberAdapter);
-
         // Настройка спиннера преподавателей
-        ArrayAdapter<SimpleModel> teacherAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teachers);
-        teacherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTeacher.setAdapter(teacherAdapter);
+        setSpinnerAdapter(spinnerTeacher, teachers);
 
         // Настройка спиннера типов предметов
-        ArrayAdapter<SimpleModel> lessonTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, lessonTypes);
-        lessonTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLessonType.setAdapter(lessonTypeAdapter);
+        setSpinnerAdapter(spinnerLessonType, lessonTypes);
 
         // Настройка спиннера названий предметов
-        ArrayAdapter<SimpleModel> lessonAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, lessonNames);
-        lessonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLessonName.setAdapter(lessonAdapter);
+        setSpinnerAdapter(spinnerLessonName, lessonNames);
 
         // Настройка спиннера дней недели
-        ArrayAdapter<SimpleModel> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dows);
-        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDayOfWeek.setAdapter(dayAdapter);
+        setSpinnerAdapter(spinnerDayOfWeek, dows);
 
         // Настройка спиннера типов недели
-        ArrayAdapter<SimpleModel> weekAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getWeekTypes());
-        weekAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerWeekType.setAdapter(weekAdapter);
+        setSpinnerAdapter(spinnerWeekType, weektypes);
     }
+
+    private void setupSpinnerLessonNumber() {
+        int weekTypeId = ((SimpleModel) spinnerWeekType.getSelectedItem()).getId();
+        int dayOfWeekId = ((SimpleModel) spinnerDayOfWeek.getSelectedItem()).getId();
+
+        List<String> numbers;
+
+        if (lesson == null) {
+            numbers = scheduleDao.getAvailableNumbers(weekTypeId, dayOfWeekId);
+            setSpinnerAdapter(spinnerLessonNumber, numbers);
+            return;
+        }
+
+        int lessonWeekTypeId = weektypes.get(getIndex(spinnerWeekType, lesson.getWeekType())).getId();
+        int lessonDayOfWeekId = dows.get(getIndex(spinnerDayOfWeek, lesson.getDayOfWeek())).getId();
+
+        if (weekTypeId == lessonWeekTypeId && dayOfWeekId == lessonDayOfWeekId) {
+            numbers = scheduleDao.getAvailableNumbers(weekTypeId, dayOfWeekId, lesson.getNumber());
+            setSpinnerAdapter(spinnerLessonNumber, numbers);
+            spinnerLessonNumber.setSelection(getIndex(spinnerLessonNumber, String.valueOf(lesson.getNumber())));
+        } else {
+            numbers = scheduleDao.getAvailableNumbers(weekTypeId, dayOfWeekId);
+            setSpinnerAdapter(spinnerLessonNumber, numbers);
+        }
+    }
+
+    private <T> void setSpinnerAdapter(Spinner spinner, List<T> items) {
+        ArrayAdapter<T> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
 
     private void loadLessonData() {
         Intent intent = getIntent();
@@ -129,12 +147,12 @@ public class LessonEditActivity extends AppCompatActivity {
         
         if (lesson != null) {
             isEditMode = true;
-            spinnerDayOfWeek.setSelection(lesson.getDayofweek());
-            spinnerWeekType.setSelection(lesson.getWeektype());
-            spinnerLessonName.setSelection(getSelectedIndex(spinnerLessonName, lesson.getLessonName()));
-            spinnerLessonType.setSelection(getSelectedIndex(spinnerLessonType, lesson.getLessonType()));
-            spinnerTeacher.setSelection(getSelectedIndex(spinnerTeacher, lesson.getTeacherName()));
-            spinnerLessonNumber.setSelection(getSelectedIndex(spinnerLessonNumber, String.valueOf(lesson.getNumber())));
+            spinnerDayOfWeek.setSelection(getIndex(spinnerDayOfWeek, lesson.getDayOfWeek()));
+            spinnerWeekType.setSelection(getIndex(spinnerWeekType, lesson.getWeekType()));
+            spinnerLessonName.setSelection(getIndex(spinnerLessonName, lesson.getLessonName()));
+            spinnerLessonType.setSelection(getIndex(spinnerLessonType, lesson.getLessonType()));
+            spinnerTeacher.setSelection(getIndex(spinnerTeacher, lesson.getTeacherName()));
+            spinnerLessonNumber.setSelection(getIndex(spinnerLessonNumber, String.valueOf(lesson.getNumber())));
             etClassroom.setText(lesson.getClassroom());
             
             btnDelete.setVisibility(View.VISIBLE);
@@ -149,6 +167,25 @@ public class LessonEditActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(v -> { deleteLesson(); });
 
         btnCancel.setOnClickListener(v -> { finish(); });
+
+        spinnerWeekType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setupSpinnerLessonNumber();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        spinnerDayOfWeek.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setupSpinnerLessonNumber();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
     }
 
     private void saveLesson() {
@@ -162,6 +199,11 @@ public class LessonEditActivity extends AppCompatActivity {
 
         if (classroom.isEmpty()) {
             Toast.makeText(this, "Введите аудиторию", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (classroom.length() > 50) {
+            Toast.makeText(this, "Сделайте аудиторию короче, максимальный размер: 50",Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -183,21 +225,6 @@ public class LessonEditActivity extends AppCompatActivity {
             Toast.makeText(this, "Пара удалена", Toast.LENGTH_SHORT).show();
             finish();
         }
-    }
-
-    private List<SimpleModel> getWeekTypes() {
-        List<SimpleModel> weeks = new ArrayList<>();
-        weeks.add(new SimpleModel(1, "Нечетная"));
-        weeks.add(new SimpleModel(2, "Четная"));
-        return weeks;
-    }
-
-    private List<String> getNumbers() {
-        List<String> numbers = new ArrayList<>();
-        for (int i = 1; i <= 6; ++i) {
-            numbers.add(String.valueOf(i));
-        }
-        return numbers;
     }
 
     @Override

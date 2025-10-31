@@ -22,8 +22,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lr3_428_09.adapter.DayGroupAdapter;
 import com.lr3_428_09.database.DbHelper;
 import com.lr3_428_09.database.ScheduleDao;
+import com.lr3_428_09.database.SimpleDao;
+import com.lr3_428_09.database.TableName;
 import com.lr3_428_09.model.DayGroup;
 import com.lr3_428_09.model.ScheduleItem;
+import com.lr3_428_09.model.SimpleModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
+    private SimpleDao weekTypeDao;
     private Spinner spinnerWeekType;
     private FloatingActionButton fabAddLesson;
     private FloatingActionButton fabAdmin;
@@ -77,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
             dbHelper.createDatabase();
             db = dbHelper.openDatabase();
             scheduleDao = new ScheduleDao(db);
+            weekTypeDao = new SimpleDao(TableName.WEEK_TYPES_TABLE.getName(), db);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter(this, R.layout.spinner_item_bold,
-                    new String[]{"Нечетная", "Четная"});
+            ArrayAdapter<SimpleModel> adapter = new ArrayAdapter<>(this, R.layout.spinner_item_bold, weekTypeDao.getAll());
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerWeekType.setAdapter(adapter);
 
@@ -139,18 +143,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<DayGroup> getListDaysGroup(ScheduleDao scheduleDao, String weekType) {
-        Map<String, Integer> daysofweek = new HashMap<>();
-        daysofweek.put("Понедельник", 0);
-        daysofweek.put("Вторник", 1);
-        daysofweek.put("Среда", 2);
-        daysofweek.put("Четверг", 3);
-        daysofweek.put("Пятница", 4);
-        daysofweek.put("Суббота", 5);
+        List<SimpleModel> daysofweek = new SimpleDao(TableName.DOWS_TABLE.getName(), db).getAll();
 
         List<DayGroup> groups = new ArrayList<>();
         Cursor cursor = scheduleDao.getAllLessons(weekType);
 
-        String myDayOfWeek_id = "Понедельник";
+        String myDayOfWeek_id = daysofweek.get(0).getName();
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
             int number = cursor.getInt(2);
@@ -158,23 +156,29 @@ public class MainActivity extends AppCompatActivity {
             String lesson_type = cursor.getString(7);
             String teacher_name = cursor.getString(5);
             String classroom = cursor.getString(3);
-            String dayOfWeek = cursor.getString(1);
-            int weektype = spinnerWeekType.getSelectedItemPosition();
-            int dayofweek = daysofweek.get(dayOfWeek);
+            String dow = cursor.getString(1);
+            String weektype = ((SimpleModel) spinnerWeekType.getSelectedItem()).getName();
+            String dayofweek = daysofweek.stream()
+                    .filter(a -> a.getName().equals(dow))
+                    .findFirst().get().getName();
 
             ScheduleItem item = new ScheduleItem(id, number, weektype, dayofweek, lesson_name,
                     lesson_type, teacher_name, classroom);
 
-            if (dayOfWeek.equals(myDayOfWeek_id)) {
-                if (groups.isEmpty()) groups.add(new DayGroup(dayOfWeek, new ArrayList<>()));
+            if (dow.equals(myDayOfWeek_id)) {
+                if (groups.isEmpty()) groups.add(new DayGroup(dow, new ArrayList<>()));
                 groups.get(groups.size() - 1).getLessons().add(item);
             } else {
-                groups.add(new DayGroup(dayOfWeek, new ArrayList<>()));
+                groups.add(new DayGroup(dow, new ArrayList<>()));
                 groups.get(groups.size() - 1).getLessons().add(item);
-                myDayOfWeek_id = dayOfWeek;
+                myDayOfWeek_id = dow;
             }
         }
-        groups.sort(Comparator.comparingInt(a -> daysofweek.get(a.getDayName())));
+        groups.sort(Comparator.comparingInt(a -> {
+            return daysofweek.stream()
+                    .filter(b -> b.getName().equals(a.getDayName()))
+                    .findFirst().get().getId();
+        }));
         return groups;
     }
 }

@@ -4,6 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ScheduleDao {
     private SQLiteDatabase db;
 
@@ -35,6 +39,26 @@ public class ScheduleDao {
                 "WHERE w.name = ? \n" +
                 "ORDER BY dow, number";
         return db.rawQuery(query, new String[]{weektype});
+    }
+
+    public List<String> getAvailableNumbers(int weektype_id, int dayofweek_id, int usednumber) {
+        List<String> unused = new ArrayList<>();
+        Collections.addAll(unused, "1", "2", "3", "4", "5", "6");
+        List<String> used = new ArrayList<>();
+        String query = "SELECT number FROM Schedule\n" +
+                "WHERE weektype_id = ? AND dayofweek_id = ? AND number != ?;";
+        try (Cursor cursor = db.rawQuery(query,
+                new String[]{String.valueOf(weektype_id), String.valueOf(dayofweek_id), String.valueOf(usednumber)})) {
+            while (cursor.moveToNext()) {
+                used.add(cursor.getString(0));
+            }
+        }
+        unused.removeAll(used);
+        return unused;
+    }
+
+    public List<String> getAvailableNumbers(int weektype_id, int dayofweek_id) {
+        return getAvailableNumbers(weektype_id, dayofweek_id, -1);
     }
 
     public int deleteLesson(int id) {
