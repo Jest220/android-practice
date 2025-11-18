@@ -1,27 +1,36 @@
 <resources>
-    <string name="app_name">lr1_428_09</string>
+    <string name="app_name">Лаба 4</string>
     <string name="title">Вычисление аргумента полинома</string>
     <string name="subtitle">Метод дихотомии для a0 + a1·x + a2·x^2</string>
 
+    <!-- Подписи для полей -->
+    <string name="label_left">Левая граница L</string>
+    <string name="label_right">Правая граница R</string>
     <string name="label_a0">Коэффициент a0</string>
     <string name="label_a1">Коэффициент a1</string>
     <string name="label_a2">Коэффициент a2</string>
     <string name="label_fx">Значение функции f(x)</string>
     <string name="label_eps">Допустимая погрешность ε</string>
 
+    <!-- Подсказки -->
     <string name="hint_number">Введите число</string>
+    <string name="interval_hint">Интервал поиска корня [L, R]</string>
 
+    <!-- Кнопка -->
     <string name="btn_compute">Вычислить x</string>
+
+    <!-- Заголовки результатов -->
     <string name="result_title">Результат</string>
     <string name="result_x">Значение x:</string>
     <string name="result_err">Погрешность:</string>
 
-
+    <!-- Ошибки -->
     <string name="error_input_interval">Задан некорректный интервал</string>
     <string name="error_input_eps">Задана некорректная погрешность</string>
     <string name="error_input">Проверьте корректность введённых данных</string>
     <string name="error_no_root">Корень не найден на заданном интервале</string>
-    <string name="interval_hint">Интервал поиска корня [L, R]</string>
-    <string name="label_left">Левая граница L</string>
-    <string name="label_right">Правая граница R</string>
+    <string name="error_network">Сетевая ошибка: не удалось подключиться к серверу</string>
+    <string name="error_json_parse">Ошибка обработки данных с сервера</string>
+    <string name="error_http">HTTP ошибка</string>
+    <string name="error_empty_response">Сервер вернул пустой ответ</string>
 </resources>

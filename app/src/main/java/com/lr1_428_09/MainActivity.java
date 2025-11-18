@@ -14,13 +14,28 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
+
+    private final OkHttpClient client = new OkHttpClient();
+    private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    private static final String API_URL = "https://bisection-api.onrender.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -34,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText etA2 = findViewById(R.id.etA2);
         TextInputEditText etFx = findViewById(R.id.etFx);
         TextInputEditText etEps = findViewById(R.id.etEps);
+
         Button btnCompute = findViewById(R.id.btnCompute);
         TextView tvX = findViewById(R.id.tvX);
         TextView tvErr = findViewById(R.id.tvErr);
@@ -48,112 +64,101 @@ public class MainActivity extends AppCompatActivity {
                 double fx = parseOrThrow(etFx.getText());
                 double eps = parseOrThrow(etEps.getText());
 
-                if (left  > right) {
-                    Toast.makeText(this, R.string.error_input_interval, Toast.LENGTH_SHORT).show();
+                if (left > right) {
+                    Toast.makeText(this, getString(R.string.error_input_interval), Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if (eps < 0.000001 || eps >= 1) {
-                    Toast.makeText(this, R.string.error_input_eps, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.error_input_eps), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                BisectionResult result = findRootByBisection(a0, a1, a2, fx, left, right, eps, 10_000);
-                if (!result.success) {
-                    Toast.makeText(this, R.string.error_no_root, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                JSONObject json = new JSONObject();
+                json.put("left", left);
+                json.put("right", right);
+                json.put("a0", a0);
+                json.put("a1", a1);
+                json.put("a2", a2);
+                json.put("fValue", fx);
+                json.put("eps", eps);
+                json.put("maxIter", 10000);
 
+                sendApiRequest(json, tvX, tvErr);
 
-                tvX.setText(getString(R.string.result_x) + " " + String.format("%.6f", result.x));
-                tvErr.setText(getString(R.string.result_err) + " " + String.format("%.6g", result.error));
             } catch (Exception e) {
-                Toast.makeText(this, R.string.error_input, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                Toast.makeText(this, getString(R.string.error_input), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private double parseOrThrow(CharSequence s) {
-        if (s == null || TextUtils.isEmpty(s.toString().trim())) throw new IllegalArgumentException();
+        if (s == null || TextUtils.isEmpty(s.toString().trim()))
+            throw new IllegalArgumentException();
         return Double.parseDouble(s.toString().trim());
     }
 
-    private double polynomial(double a0, double a1, double a2, double x) {
-        return a0 + a1 * x + a2 * x * x;
-    }
+    private void sendApiRequest(JSONObject json, TextView tvX, TextView tvErr) {
+        new Thread(() -> {
+            try {
+                RequestBody body = RequestBody.create(json.toString(), JSON);
+                Request request = new Request.Builder()
+                        .url(API_URL)
+                        .post(body)
+                        .build();
 
-    /**
-     * Метод для нахождения корня уравнения методом бисекции (деления отрезка пополам).
-     *
-     * @param a0       коэффициент a0 полинома
-     * @param a1       коэффициент a1 полинома
-     * @param a2       коэффициент a2 полинома
-     * @param fValue   значение функции, с которым сравниваем (решаем polynomial(...) = fValue)
-     * @param left     левая граница отрезка
-     * @param right    правая граница отрезка
-     * @param eps      допустимая погрешность
-     * @param maxIter  максимальное число итераций
-     * @return         результат с флагом успеха, найденным корнем и погрешностью
-     */
-    private BisectionResult findRootByBisection(double a0, double a1, double a2, double fValue,
-                                                double left, double right, double eps, int maxIter) {
-        // Вычисляем значение функции на границах
-        double fLeft = polynomial(a0, a1, a2, left) - fValue;
-        double fRight = polynomial(a0, a1, a2, right) - fValue;
+                Response response = client.newCall(request).execute();
+                String respStr = response.body() != null ? response.body().string() : "";
 
-        // Проверяем: если значения NaN или на концах отрезка функция имеет одинаковый знак,
-        // значит метод бисекции неприменим (корня на отрезке нет или он не гарантирован)
-        if (Double.isNaN(fLeft) || Double.isNaN(fRight) || fLeft * fRight > 0) {
-            return new BisectionResult(false, Double.NaN, Double.NaN);
-        }
+                if (!response.isSuccessful()) {
+                    final String finalRespStr = respStr;
+                    runOnUiThread(() -> Toast.makeText(this,
+                            getString(R.string.error_http) + ": " + response.code() + "\n" + finalRespStr,
+                            Toast.LENGTH_LONG).show());
+                    return;
+                }
 
-        // Начальные значения
-        double mid = left;                  // середина отрезка
-        double err = Math.abs(right - left); // начальная погрешность — длина отрезка
-        int iter = 0;                        // счетчик итераций
+                if (respStr.isEmpty()) {
+                    runOnUiThread(() -> Toast.makeText(this,
+                            getString(R.string.error_empty_response),
+                            Toast.LENGTH_LONG).show());
+                    return;
+                }
 
-        // Итерационный процесс
-        while (err > eps && iter < maxIter) {
-            // Находим середину отрезка
-            mid = 0.5 * (left + right);
-            // Вычисляем значение функции в середине
-            double fMid = polynomial(a0, a1, a2, mid) - fValue;
+                try {
+                    JSONObject respJson = new JSONObject(respStr);
+                    boolean success = respJson.optBoolean("success", false);
+                    if (success) {
+                        double root = respJson.optDouble("root", Double.NaN);
+                        double error = respJson.optDouble("error", Double.NaN);
+                        runOnUiThread(() -> {
+                            tvX.setText(getString(R.string.result_x) + " " + String.format("%.6f", root));
+                            tvErr.setText(getString(R.string.result_err) + " " + String.format("%.6g", error));
+                        });
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(this,
+                                getString(R.string.error_no_root) + "\nJSON: " + respStr,
+                                Toast.LENGTH_LONG).show());
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    final String finalRespStr = respStr;
+                    runOnUiThread(() -> Toast.makeText(this,
+                            getString(R.string.error_json_parse) + "\nСервер вернул:\n" + finalRespStr,
+                            Toast.LENGTH_LONG).show());
+                }
 
-            // Если значение функции близко к нулю (достаточно точное решение найдено)
-            if (Math.abs(fMid) < eps) {
-                err = Math.abs(fMid); // уточняем погрешность
-                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this,
+                        getString(R.string.error_network),
+                        Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this,
+                        getString(R.string.error_json_parse) + ": " + e.getMessage(),
+                        Toast.LENGTH_LONG).show());
             }
-
-            // Проверяем, в какой половине отрезка находится корень
-            if (fLeft * fMid <= 0) {
-                // Корень находится между left и mid → сдвигаем правую границу
-                right = mid;
-                fRight = fMid;
-            } else {
-                // Корень находится между mid и right → сдвигаем левую границу
-                left = mid;
-                fLeft = fMid;
-            }
-
-            // Пересчитываем текущую погрешность
-            err = Math.abs(right - left);
-            iter++;
-        }
-
-        // Возвращаем результат: метод завершился успешно, найденный корень и погрешность
-        return new BisectionResult(true, mid, err);
-    }
-
-    private static class BisectionResult {
-        final boolean success;
-        final double x;
-        final double error;
-
-        BisectionResult(boolean success, double x, double error) {
-            this.success = success;
-            this.x = x;
-            this.error = error;
-        }
+        }).start();
     }
 }
