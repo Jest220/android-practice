@@ -31,8 +31,8 @@ public class LessonEditActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
-    private List<SimpleModel> weektypes;
-    private List<SimpleModel> dows;
+    private List<DayOfWeek> dows;
+    private List<WeekType> weekTypes;
     private List<SimpleModel> lessonNames;
     private List<SimpleModel> lessonTypes;
     private List<SimpleModel> teachers;
@@ -60,8 +60,8 @@ public class LessonEditActivity extends AppCompatActivity {
         return 0;
     }
     private void initializeModels() {
-        weektypes = new SimpleDao(TableName.WEEK_TYPES_TABLE.getName(), db).getAll();
-        dows = new SimpleDao(TableName.DOWS_TABLE.getName(), db).getAll();
+        weekTypes = List.of(WeekType.values());
+        dows = List.of(DayOfWeek.values());
         lessonNames = new SimpleDao(TableName.LESSONS_TABLE.getName(), db).getAll();
         lessonTypes = new SimpleDao(TableName.LESSON_TYPES_TABLE.getName(), db).getAll();
         teachers = new SimpleDao(TableName.TEACHERS_TABLE.getName(), db).getAll();
@@ -106,12 +106,12 @@ public class LessonEditActivity extends AppCompatActivity {
         setSpinnerAdapter(spinnerDayOfWeek, dows);
 
         // Настройка спиннера типов недели
-        setSpinnerAdapter(spinnerWeekType, weektypes);
+        setSpinnerAdapter(spinnerWeekType, weekTypes);
     }
 
     private void setupSpinnerLessonNumber() {
-        int weekTypeId = ((SimpleModel) spinnerWeekType.getSelectedItem()).getId();
-        int dayOfWeekId = ((SimpleModel) spinnerDayOfWeek.getSelectedItem()).getId();
+        int weekTypeId = ((WeekType) spinnerWeekType.getSelectedItem()).ordinal();
+        int dayOfWeekId = ((DayOfWeek) spinnerDayOfWeek.getSelectedItem()).ordinal();
 
         List<String> numbers;
 
@@ -121,8 +121,8 @@ public class LessonEditActivity extends AppCompatActivity {
             return;
         }
 
-        int lessonWeekTypeId = weektypes.get(getIndex(spinnerWeekType, lesson.getWeekType())).getId();
-        int lessonDayOfWeekId = dows.get(getIndex(spinnerDayOfWeek, lesson.getDayOfWeek())).getId();
+        int lessonWeekTypeId = weekTypes.get(getIndex(spinnerWeekType, lesson.getWeekType())).ordinal();
+        int lessonDayOfWeekId = dows.get(getIndex(spinnerDayOfWeek, lesson.getDayOfWeek())).ordinal();
 
         if (weekTypeId == lessonWeekTypeId && dayOfWeekId == lessonDayOfWeekId) {
             numbers = scheduleDao.getAvailableNumbers(weekTypeId, dayOfWeekId, lesson.getNumber());
@@ -162,11 +162,11 @@ public class LessonEditActivity extends AppCompatActivity {
     }
 
     private void setupButtons() {
-        btnSave.setOnClickListener(v -> { saveLesson(); });
+        btnSave.setOnClickListener(v -> saveLesson());
 
-        btnDelete.setOnClickListener(v -> { deleteLesson(); });
+        btnDelete.setOnClickListener(v -> deleteLesson());
 
-        btnCancel.setOnClickListener(v -> { finish(); });
+        btnCancel.setOnClickListener(v -> finish());
 
         spinnerWeekType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -190,8 +190,8 @@ public class LessonEditActivity extends AppCompatActivity {
 
     private void saveLesson() {
         int number = Integer.parseInt(spinnerLessonNumber.getSelectedItem().toString());
-        int weektype_id = ((SimpleModel) spinnerWeekType.getSelectedItem()).getId();
-        int dayofweek_id = ((SimpleModel) spinnerDayOfWeek.getSelectedItem()).getId();
+        int weektype_id = ((WeekType) spinnerWeekType.getSelectedItem()).ordinal();
+        int dayofweek_id = ((DayOfWeek) spinnerDayOfWeek.getSelectedItem()).ordinal();
         int lesson_id = ((SimpleModel) spinnerLessonName.getSelectedItem()).getId();
         int lessontype_id = ((SimpleModel) spinnerLessonType.getSelectedItem()).getId();
         int teacher_id = ((SimpleModel) spinnerTeacher.getSelectedItem()).getId();

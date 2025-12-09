@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
-    private SimpleDao weekTypeDao;
     private Spinner spinnerWeekType;
     private FloatingActionButton fabAddLesson;
     private FloatingActionButton fabAdmin;
@@ -58,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         spinnerWeekType = findViewById(R.id.spinnerWeekType);
+        ArrayAdapter<WeekType> adapter = new ArrayAdapter<>(this, R.layout.spinner_item_bold, WeekType.values());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerWeekType.setAdapter(adapter);
+
         fabAddLesson = findViewById(R.id.fabAddLesson);
         fabAdmin = findViewById(R.id.fabAdmin);
 
@@ -81,28 +84,11 @@ public class MainActivity extends AppCompatActivity {
             dbHelper.createDatabase();
             db = dbHelper.openDatabase();
             scheduleDao = new ScheduleDao(db);
-            weekTypeDao = new SimpleDao(TableName.WEEK_TYPES_TABLE.getName(), db);
-
-            ArrayAdapter<SimpleModel> adapter = new ArrayAdapter<>(this, R.layout.spinner_item_bold, weekTypeDao.getAll());
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerWeekType.setAdapter(adapter);
 
             spinnerWeekType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    List<DayGroup> dayGroups;
-                    switch (position) {
-                        case 0:
-                            dayGroups = getListDaysGroup(scheduleDao, "Нечетная");
-                            break;
-                        case 1:
-                            dayGroups = getListDaysGroup(scheduleDao, "Четная");
-                            break;
-                        default:
-                            dayGroups = null;
-                    }
-                    dayGroupAdapter = new DayGroupAdapter(dayGroups);
-                    recyclerView.setAdapter(dayGroupAdapter);
+                    setupRecyclerView();
                 }
 
                 @Override
@@ -127,58 +113,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
         List<DayGroup> dayGroups;
-        switch (spinnerWeekType.getSelectedItemPosition()) {
-            case 0:
-                dayGroups = getListDaysGroup(scheduleDao, "Нечетная");
-                break;
-            case 1:
-                dayGroups = getListDaysGroup(scheduleDao, "Четная");
-                break;
-            default:
-                dayGroups = null;
-        }
+        dayGroups = getListDaysGroup(scheduleDao, spinnerWeekType.getSelectedItemPosition());
         dayGroupAdapter = new DayGroupAdapter(dayGroups);
         recyclerView.setAdapter(dayGroupAdapter);
     }
 
-    private List<DayGroup> getListDaysGroup(ScheduleDao scheduleDao, String weekType) {
-        List<SimpleModel> daysofweek = new SimpleDao(TableName.DOWS_TABLE.getName(), db).getAll();
+    private List<DayGroup> getListDaysGroup(ScheduleDao scheduleDao, int weekType) {
+        DayOfWeek[] daysOfWeek = DayOfWeek.values();
 
         List<DayGroup> groups = new ArrayList<>();
         Cursor cursor = scheduleDao.getAllLessons(weekType);
 
-        String myDayOfWeek_id = daysofweek.get(0).getName();
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
+            String dow = daysOfWeek[cursor.getInt(1)].getName();
             int number = cursor.getInt(2);
-            String lesson_name = cursor.getString(4);
-            String lesson_type = cursor.getString(7);
-            String teacher_name = cursor.getString(5);
             String classroom = cursor.getString(3);
-            String dow = cursor.getString(1);
-            String weektype = ((SimpleModel) spinnerWeekType.getSelectedItem()).getName();
-            String dayofweek = daysofweek.stream()
-                    .filter(a -> a.getName().equals(dow))
-                    .findFirst().get().getName();
+            String lesson_name = cursor.getString(4);
+            String teacher_name = cursor.getString(5);
+            String lesson_type = cursor.getString(6);
 
-            ScheduleItem item = new ScheduleItem(id, number, weektype, dayofweek, lesson_name,
-                    lesson_type, teacher_name, classroom);
+            ScheduleItem item = new ScheduleItem(id, number, WeekType.values()[weekType].getName(),
+                    dow, lesson_name, lesson_type, teacher_name, classroom);
 
-            if (dow.equals(myDayOfWeek_id)) {
-                if (groups.isEmpty()) groups.add(new DayGroup(dow, new ArrayList<>()));
-                groups.get(groups.size() - 1).getLessons().add(item);
+            DayGroup group = groups.stream()
+                    .filter(a -> a.getDayName().equals(dow))
+                    .findAny()
+                    .orElse(null);
+            if (group != null) {
+                group.getLessons().add(item);
             } else {
                 groups.add(new DayGroup(dow, new ArrayList<>()));
                 groups.get(groups.size() - 1).getLessons().add(item);
-                myDayOfWeek_id = dow;
             }
         }
-        groups.sort(Comparator.comparingInt(a -> {
-            return daysofweek.stream()
-                    .filter(b -> b.getName().equals(a.getDayName()))
-                    .findFirst().get().getId();
-        }));
         return groups;
     }
 }

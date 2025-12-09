@@ -28,17 +28,16 @@ public class ScheduleDao {
         return db.insert("Schedule", null, values);
     }
 
-    public Cursor getAllLessons(String weektype) {
-        String query = "SELECT s.id, d.name as dow, s.number, s.classroom, l.name as lesson, t.name as teacher, w.name as week, lt.name as lessontype\n" +
-                "FROM Schedule s\n" +
-                "JOIN WeekTypes w ON s.weektype_id = w.id\n" +
-                "JOIN Teachers t ON s.teacher_id = t.id\n" +
-                "JOIN Lessons l ON s.lesson_id = l.id\n" +
-                "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
-                "JOIN DaysOfWeek d ON s.dayofweek_id = d.id\n" +
-                "WHERE w.name = ? \n" +
-                "ORDER BY dow, number";
-        return db.rawQuery(query, new String[]{weektype});
+    public Cursor getAllLessons(int weektype) {
+        String query = "SELECT s.id, s.dayofweek_id, s.number, s.classroom, l.name as lesson," +
+                    "t.name as teacher, lt.name as lessontype\n" +
+                    "FROM Schedule s\n" +
+                    "JOIN Teachers t ON s.teacher_id = t.id\n" +
+                    "JOIN Lessons l ON s.lesson_id = l.id\n" +
+                    "JOIN LessonTypes lt ON s.lessontype_id = lt.id\n" +
+                    "WHERE s.weektype_id = ?\n" +
+                    "ORDER BY dayofweek_id, number";
+        return db.rawQuery(query, new String[]{String.valueOf(weektype)});
     }
 
     public List<String> getAvailableNumbers(int weektype_id, int dayofweek_id, int usednumber) {
