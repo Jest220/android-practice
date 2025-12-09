@@ -6,9 +6,9 @@ public enum WeekType {
     ODD("Нечетная"),
     EVEN("Четная");
 
-    private String name;
+    private final String name;
 
-    private WeekType(String name) {
+    WeekType(String name) {
         this.name = name;
     }
 

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScheduleDao {
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     public ScheduleDao(SQLiteDatabase db) {
         this.db = db;

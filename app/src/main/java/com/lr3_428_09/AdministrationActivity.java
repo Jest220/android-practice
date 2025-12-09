@@ -27,7 +27,6 @@ public class AdministrationActivity extends AppCompatActivity {
     private Button btnAdd;
     private Spinner spinnerTable;
     private ListView listView;
-    private DbHelper dbHelper;
     private SQLiteDatabase db;
     private SimpleDao simpleDao;
     TableName[] tableNames;
@@ -47,7 +46,7 @@ public class AdministrationActivity extends AppCompatActivity {
     }
 
     private void initializeDatabase() {
-        dbHelper = new DbHelper(this);
+        DbHelper dbHelper = new DbHelper(this);
         try {
             dbHelper.createDatabase();
             db = dbHelper.openDatabase();
@@ -65,7 +64,7 @@ public class AdministrationActivity extends AppCompatActivity {
     }
 
     private void setupButtons() {
-        btnCancel.setOnClickListener(v -> { finish(); });
+        btnCancel.setOnClickListener(v -> finish());
         btnAdd.setOnClickListener(v -> {
             PopupDialogFragment dialog = new PopupDialogFragment(simpleDao, false);
             dialog.setListener(this::updateListView);
@@ -82,7 +81,7 @@ public class AdministrationActivity extends AppCompatActivity {
     private void updateListView() {
         if (simpleDao != null) {
             records = simpleDao.getAll();
-            ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.list_item_normal, records);
+            ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter<>(AdministrationActivity.this, R.layout.list_item_normal, records);
             listView.setAdapter(listViewAdapter);
         }
     }
@@ -95,7 +94,7 @@ public class AdministrationActivity extends AppCompatActivity {
             tableNameList.add(tableName.getReadableName());
         }
         // заполняем спиннер
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.spinner_item_bold, tableNameList);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(AdministrationActivity.this, R.layout.spinner_item_bold, tableNameList);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTable.setAdapter(spinnerAdapter);
 
@@ -106,7 +105,7 @@ public class AdministrationActivity extends AppCompatActivity {
                 String tableName = tableNames[spinnerTable.getSelectedItemPosition()].getName();
                 simpleDao = new SimpleDao(tableName, db);
                 records = simpleDao.getAll();
-                ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter(AdministrationActivity.this, R.layout.list_item_normal, records);
+                ArrayAdapter<SimpleModel> listViewAdapter = new ArrayAdapter<>(AdministrationActivity.this, R.layout.list_item_normal, records);
                 listView.setAdapter(listViewAdapter);
             }
 

@@ -22,8 +22,8 @@ public class PopupDialogFragment extends DialogFragment {
     private EditText etValue;
     private Button btnPopupSave;
     private Button btnPopupDelete;
-    private SimpleDao simpleDao;
-    private boolean isEditMode;
+    private final SimpleDao simpleDao;
+    private final boolean isEditMode;
     private OnDialogResultListener listener;
     private SimpleModel model;
 
@@ -62,8 +62,8 @@ public class PopupDialogFragment extends DialogFragment {
     }
 
     public void setupButtons() {
-        btnPopupSave.setOnClickListener(v -> { saveModel(); });
-        btnPopupDelete.setOnClickListener(v -> { deleteModel(); });
+        btnPopupSave.setOnClickListener(v -> saveModel());
+        btnPopupDelete.setOnClickListener(v -> deleteModel());
     }
 
     private void saveModel() {

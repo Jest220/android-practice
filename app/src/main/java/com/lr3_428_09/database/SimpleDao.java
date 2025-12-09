@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleDao {
-    private String tableName;
-    private SQLiteDatabase db;
+    private final String tableName;
+    private final SQLiteDatabase db;
 
     public SimpleDao(String tableName, SQLiteDatabase db) {
         this.tableName = tableName;

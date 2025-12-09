@@ -11,9 +11,9 @@ public enum DayOfWeek {
     Saturday("Суббота"),
     Sunday("Воскресенье");
 
-    private String name;
+    private final String name;
 
-    private DayOfWeek(String name) {
+    DayOfWeek(String name) {
         this.name = name;
     }
 

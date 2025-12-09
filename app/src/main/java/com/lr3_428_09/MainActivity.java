@@ -22,23 +22,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lr3_428_09.adapter.DayGroupAdapter;
 import com.lr3_428_09.database.DbHelper;
 import com.lr3_428_09.database.ScheduleDao;
-import com.lr3_428_09.database.SimpleDao;
-import com.lr3_428_09.database.TableName;
 import com.lr3_428_09.model.DayGroup;
 import com.lr3_428_09.model.ScheduleItem;
-import com.lr3_428_09.model.SimpleModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private DayGroupAdapter dayGroupAdapter;
-    private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
     private Spinner spinnerWeekType;
@@ -78,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        dbHelper = new DbHelper(this);
+        DbHelper dbHelper = new DbHelper(this);
 
         try {
             dbHelper.createDatabase();
@@ -119,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         List<DayGroup> dayGroups;
         dayGroups = getListDaysGroup(scheduleDao, spinnerWeekType.getSelectedItemPosition());
-        dayGroupAdapter = new DayGroupAdapter(dayGroups);
+        DayGroupAdapter dayGroupAdapter = new DayGroupAdapter(dayGroups);
         recyclerView.setAdapter(dayGroupAdapter);
     }
 

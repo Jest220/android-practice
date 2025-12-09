@@ -3,8 +3,8 @@ package com.lr3_428_09.model;
 import java.util.List;
 
 public class DayGroup {
-    private String dayName;
-    private List<ScheduleItem> lessons;
+    private final String dayName;
+    private final List<ScheduleItem> lessons;
 
     public DayGroup(String dayName, List<ScheduleItem> lessons) {
         this.dayName = dayName;

@@ -3,14 +3,14 @@ package com.lr3_428_09.model;
 import java.io.Serializable;
 
 public class ScheduleItem implements Serializable {
-    private int id;
-    private int number;
-    private String weektype;
-    private String dayofweek;
-    private String lessonName;
-    private String lessonType;
-    private String teacherName;
-    private String classroom;
+    private final int id;
+    private final int number;
+    private final String weektype;
+    private final String dayofweek;
+    private final String lessonName;
+    private final String lessonType;
+    private final String teacherName;
+    private final String classroom;
 
     public ScheduleItem(int id, int number, String weektype, String dayofweek,
                         String lessonName, String lessonType,

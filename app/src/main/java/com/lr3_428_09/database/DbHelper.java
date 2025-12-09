@@ -12,7 +12,7 @@ import java.io.OutputStream;
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "schedule.db";
     private final Context context;
-    private String dbPath;
+    private final String dbPath;
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, 1);

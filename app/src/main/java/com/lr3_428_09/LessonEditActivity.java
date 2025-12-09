@@ -28,7 +28,6 @@ public class LessonEditActivity extends AppCompatActivity {
     private EditText etClassroom;
     private Spinner spinnerLessonName, spinnerLessonType, spinnerTeacher, spinnerLessonNumber, spinnerDayOfWeek, spinnerWeekType;
     private Button btnSave, btnDelete, btnCancel;
-    private DbHelper dbHelper;
     private SQLiteDatabase db;
     private ScheduleDao scheduleDao;
     private List<DayOfWeek> dows;
@@ -81,7 +80,7 @@ public class LessonEditActivity extends AppCompatActivity {
     }
 
     private void initializeDatabase() {
-        dbHelper = new DbHelper(this);
+        DbHelper dbHelper = new DbHelper(this);
         try {
             dbHelper.createDatabase();
             db = dbHelper.openDatabase();
